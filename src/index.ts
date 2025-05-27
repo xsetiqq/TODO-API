@@ -12,6 +12,17 @@ app.get("/todos", (req, res) => {
   res.status(200).json(todos);
 });
 
+app.get("/todos/:id", (req, res) => {
+  const Id = Number(req.params.id);
+  const todo = todos.find((item) => item.id === Id);
+
+  if (!todo) {
+    res.status(404).json({ error: "Id is not found" });
+  } else {
+    res.json(todo);
+  }
+});
+
 app.post("/todos", (req, res) => {
   const { title } = req.body;
   const newTodo: Todo = {
@@ -37,8 +48,9 @@ app.put("/todos/:id", (req, res) => {
   if (putTodosIndex === -1) {
     res.status(404).json({ error: "Id is not found" });
   } else {
-    todos[putTodosIndex] = req.body;
-    todos[putTodosIndex].id = putId;
+    const { title, completed } = req.body;
+    if (title !== undefined) todos[putTodosIndex].title = title;
+    if (completed !== undefined) todos[putTodosIndex].completed = completed;
 
     res.status(200).send(todos[putTodosIndex]);
   }
